@@ -22,7 +22,7 @@ export function CatalogPage() {
 
   return (
     <main>
-      <h1>Каталог</h1>
+      <h1 className="mb-12 text-3xl font-bold">Каталог</h1>
       <ProductList products={products} onAdd={addItem} />
     </main>
   );

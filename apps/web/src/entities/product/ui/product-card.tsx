@@ -9,16 +9,18 @@ export function ProductCard({ product, action }: ProductCardProps) {
   const isAvailable = product.stock > 0;
 
   return (
-    <article>
-      <h3>{product.title}</h3>
+    <article className="flex flex-col gap-4 rounded-xl border border-asphalt-700 bg-asphalt-800 p-6 transition-colors hover:border-asphalt-500">
+      <h3 className="text-lg font-semibold">{product.title}</h3>
 
-      <p>{product.description}</p>
+      <p className="text-sm text-asphalt-200">{product.description}</p>
 
-      <p>{(product.price / 100).toLocaleString('ru-RU')} ₽</p>
+      <p className="pt-2 text-xl font-bold">{(product.price / 100).toLocaleString('ru-RU')} ₽</p>
 
-      <p>{isAvailable ? `В наличии: ${product.stock}` : 'Нет в наличии'}</p>
+      <p className={isAvailable ? 'text-sm text-success' : 'text-sm text-danger'}>
+        {isAvailable ? `В наличии: ${product.stock}` : 'Нет в наличии'}
+      </p>
 
-      {action}
+      <div className="mt-auto pt-4">{action}</div>
     </article>
   );
 }

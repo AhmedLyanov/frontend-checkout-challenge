@@ -11,32 +11,49 @@ export function CartPage() {
   }, [loadCart]);
 
   if (isLoading) {
-    return <p>Загрузка...</p>;
+    return (
+      <main>
+        <p className="text-asphalt-200">Загрузка...</p>
+      </main>
+    );
   }
 
   if (error) {
-    return <p>{error.message}</p>;
+    return (
+      <main>
+        <p className="text-danger">{error.message}</p>
+      </main>
+    );
   }
 
   if (!cart || cart.items.length === 0) {
-    return <p>Корзина пуста.</p>;
+    return (
+      <main className="flex min-h-[70vh] flex-col items-center justify-center gap-4">
+        <p className="text-6xl text-asphalt-300">:(</p>
+        <p className="text-xl text-asphalt-300">Корзина пуста</p>
+      </main>
+    );
   }
 
   return (
     <main>
-      <h1>Корзина</h1>
+      <h1 className="mb-8 text-3xl font-bold">Корзина</h1>
 
-      {cart.items.map((item) => (
-        <CartItem
-          key={item.productId}
-          item={item}
-          onIncrease={() => updateQuantity(item.productId, item.quantity + 1)}
-          onDecrease={() => updateQuantity(item.productId, item.quantity - 1)}
-          onRemove={() => removeItem(item.productId)}
-        />
-      ))}
+      <div className="flex flex-col gap-4">
+        {cart.items.map((item) => (
+          <CartItem
+            key={item.productId}
+            item={item}
+            onIncrease={() => updateQuantity(item.productId, item.quantity + 1)}
+            onDecrease={() => updateQuantity(item.productId, item.quantity - 1)}
+            onRemove={() => removeItem(item.productId)}
+          />
+        ))}
+      </div>
 
-      <p>Итого: {(cart.subtotal / 100).toLocaleString('ru-RU')} ₽</p>
+      <p className="mt-8 text-right text-2xl font-semibold">
+        Итого: {(cart.subtotal / 100).toLocaleString('ru-RU')} ₽
+      </p>
     </main>
   );
 }

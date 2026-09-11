@@ -1,4 +1,4 @@
-import { AppRouter } from '@/app/router';
+import { AppRouter } from '@/app/router/router';
 
 function App() {
   return <AppRouter />;
