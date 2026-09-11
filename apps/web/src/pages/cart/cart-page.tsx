@@ -1,11 +1,17 @@
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
+import { useSession } from '@/app/providers/session-provider';
 import { useCart } from '@/entities/cart/model/use-cart';
 import { CartItem } from '@/entities/cart/ui/cart-item';
 import { Loader, Typography } from '@/shared/ui';
 
 export function CartPage() {
-  const { cart, isLoading, error, loadCart, updateQuantity, removeItem } = useCart();
+  const { session } = useSession();
+
+  const { cart, isLoading, error, loadCart, updateQuantity, removeItem } = useCart({
+    token: session.token,
+  });
 
   useEffect(() => {
     loadCart();
@@ -57,9 +63,18 @@ export function CartPage() {
         ))}
       </div>
 
-      <Typography variant="total" className="mt-8 text-right">
-        Итого: {(cart.subtotal / 100).toLocaleString('ru-RU')} ₽
-      </Typography>
+      <div className="mt-8 flex flex-col items-end gap-4">
+        <Typography variant="total">
+          Итого: {(cart.subtotal / 100).toLocaleString('ru-RU')} ₽
+        </Typography>
+
+        <Link
+          to="/checkout"
+          className="inline-flex h-10 items-center justify-center rounded-md border border-asphalt-600 bg-asphalt-700 px-4 py-2 text-sm font-medium transition-colors hover:bg-asphalt-600"
+        >
+          Оформить заказ
+        </Link>
+      </div>
     </main>
   );
 }

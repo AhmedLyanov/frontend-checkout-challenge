@@ -3,15 +3,15 @@ import { useCallback, useEffect, useState } from 'react';
 import type { Cart } from '@checkout/contracts';
 
 import { getCart } from '@/entities/cart/api/get-cart';
-import { setCartItem } from '@/entities/cart/api/set-cart-item';
 import { deleteCartItem } from '@/entities/cart/api/delete-cart-item';
-import { getSessionToken } from '@/entities/session/lib/storage';
+import { setCartItem } from '@/entities/cart/api/set-cart-item';
 
 interface UseCartOptions {
+  token: string;
   initialCart?: Cart | null;
 }
 
-export function useCart({ initialCart = null }: UseCartOptions = {}) {
+export function useCart({ token, initialCart = null }: UseCartOptions) {
   const [cart, setCart] = useState<Cart | null>(initialCart);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -21,12 +21,6 @@ export function useCart({ initialCart = null }: UseCartOptions = {}) {
   }, [initialCart]);
 
   const loadCart = useCallback(async () => {
-    const token = getSessionToken();
-
-    if (!token) {
-      throw new Error('Сессия не найдена.');
-    }
-
     try {
       setIsLoading(true);
       setError(null);
@@ -45,16 +39,10 @@ export function useCart({ initialCart = null }: UseCartOptions = {}) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [token]);
 
   const updateQuantity = useCallback(
     async (productId: string, quantity: number) => {
-      const token = getSessionToken();
-
-      if (!token) {
-        throw new Error('Сессия не найдена.');
-      }
-
       await setCartItem({
         productId,
         quantity,
@@ -63,7 +51,7 @@ export function useCart({ initialCart = null }: UseCartOptions = {}) {
 
       await loadCart();
     },
-    [loadCart],
+    [loadCart, token],
   );
 
   const addItem = useCallback(
@@ -78,12 +66,6 @@ export function useCart({ initialCart = null }: UseCartOptions = {}) {
 
   const removeItem = useCallback(
     async (productId: string) => {
-      const token = getSessionToken();
-
-      if (!token) {
-        throw new Error('Сессия не найдена.');
-      }
-
       await deleteCartItem({
         productId,
         token,
@@ -91,7 +73,7 @@ export function useCart({ initialCart = null }: UseCartOptions = {}) {
 
       await loadCart();
     },
-    [loadCart],
+    [loadCart, token],
   );
 
   return {

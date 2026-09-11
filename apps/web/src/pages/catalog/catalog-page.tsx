@@ -1,24 +1,24 @@
 import { useEffect, useState } from 'react';
 
-import type { Product, Session } from '@checkout/contracts';
+import type { Product } from '@checkout/contracts';
 
+import { useSession } from '@/app/providers/session-provider';
 import { useCart } from '@/entities/cart/model/use-cart';
 import { getProducts } from '@/entities/product/api/get-products';
-import { restoreSession } from '@/entities/session/api/restore-session';
 import { ProductList } from '@/widgets/product-list/ui/product-list';
 import { Typography } from '@/shared/ui';
 
 export function CatalogPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [session, setSession] = useState<Session | null>(null);
+  const { session } = useSession();
 
   const { addItem } = useCart({
-    initialCart: session?.cart,
+    token: session.token,
+    initialCart: session.cart,
   });
 
   useEffect(() => {
     getProducts().then(setProducts);
-    restoreSession().then(setSession);
   }, []);
 
   return (

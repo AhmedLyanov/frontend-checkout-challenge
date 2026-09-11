@@ -16,6 +16,12 @@ const CartPage = lazy(() =>
   })),
 );
 
+const CheckoutPage = lazy(() =>
+  import('@/pages/checkout/checkout-page').then((module) => ({
+    default: module.CheckoutPage,
+  })),
+);
+
 const router = createBrowserRouter([
   {
     element: <DefaultLayout />,
@@ -33,6 +39,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Loader />}>
             <CartPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/checkout',
+        element: (
+          <Suspense fallback={<Loader />}>
+            <CheckoutPage />
           </Suspense>
         ),
       },
