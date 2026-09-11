@@ -8,7 +8,7 @@ import { Loader, Typography } from '@/shared/ui';
 export function CheckoutPage() {
   const { session } = useSession();
 
-  const { options, error, isLoading, isQuoteLoading, submit } = useCheckout({
+  const { options, error, isLoading, isSubmitting, submit } = useCheckout({
     token: session.token,
   });
 
@@ -40,7 +40,7 @@ export function CheckoutPage() {
 
       <CheckoutForm options={options} onSubmit={submit} />
 
-      {isQuoteLoading && (
+      {isSubmitting && (
         <div className="mt-6">
           <Loader />
         </div>

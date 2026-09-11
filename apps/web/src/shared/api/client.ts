@@ -89,7 +89,6 @@ async function request<T>(path: string, config: ApiRequestConfig = {}): Promise<
     throw new NetworkError();
   }
 }
-
 export const api = {
   get<T>(path: string, token?: string) {
     return request<T>(path, {
@@ -98,19 +97,21 @@ export const api = {
     });
   },
 
-  post<T>(path: string, data?: unknown, token?: string) {
+  post<T>(path: string, data?: unknown, token?: string, options?: ApiRequestOptions) {
     return request<T>(path, {
       method: 'POST',
       data,
       token,
+      headers: options?.headers,
     });
   },
 
-  put<T>(path: string, data?: unknown, token?: string) {
+  put<T>(path: string, data?: unknown, token?: string, options?: ApiRequestOptions) {
     return request<T>(path, {
       method: 'PUT',
       data,
       token,
+      headers: options?.headers,
     });
   },
 

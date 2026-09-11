@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import type { CheckoutOptions, Quote } from '@checkout/contracts';
+import type { CheckoutOptions, Order } from '@checkout/contracts';
 
+import { createOrder } from '@/entities/order/api/create-order';
 import { createQuote } from '@/features/checkout/api/create-quote';
 import { getCheckoutOptions } from '@/features/checkout/api/get-checkout-options';
 import type { CheckoutFormValues } from '@/features/checkout/model/checkout-schema';
 import { createDelivery } from '@/features/checkout/model/create-delivery';
+import { createIdempotencyKey } from '@/shared/lib/create-idempotency-key';
 
 interface UseCheckoutOptions {
   token: string;
@@ -13,14 +15,11 @@ interface UseCheckoutOptions {
 
 export function useCheckout({ token }: UseCheckoutOptions) {
   const [options, setOptions] = useState<CheckoutOptions | null>(null);
-
-  const [quote, setQuote] = useState<Quote | null>(null);
-
+  const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
-
-  const [isQuoteLoading, setIsQuoteLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -32,15 +31,11 @@ export function useCheckout({ token }: UseCheckoutOptions) {
 
         const nextOptions = await getCheckoutOptions(token);
 
-        if (!isMounted) {
-          return;
-        }
+        if (!isMounted) return;
 
         setOptions(nextOptions);
       } catch (error) {
-        if (!isMounted) {
-          return;
-        }
+        if (!isMounted) return;
 
         setError(
           error instanceof Error ? error : new Error('Не удалось загрузить оформление заказа.'),
@@ -61,30 +56,38 @@ export function useCheckout({ token }: UseCheckoutOptions) {
 
   const submit = useCallback(
     async (data: CheckoutFormValues) => {
-      if (!options) {
-        return;
-      }
+      if (!options) return;
 
       try {
         setError(null);
-        setQuote(null);
-        setIsQuoteLoading(true);
+        setOrder(null);
+        setIsSubmitting(true);
 
         const delivery = createDelivery(data);
 
-        const nextQuote = await createQuote({
+        const quote = await createQuote({
           token,
           cartVersion: options.cart.version,
           delivery,
         });
 
-        setQuote(nextQuote);
+        const nextOrder = await createOrder({
+          token,
+          quoteId: quote.id,
+          customer: {
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+          },
+          paymentMethod: data.paymentMethod,
+          idempotencyKey: createIdempotencyKey(),
+        });
+
+        setOrder(nextOrder);
       } catch (error) {
-        setError(
-          error instanceof Error ? error : new Error('Не удалось рассчитать стоимость заказа.'),
-        );
+        setError(error instanceof Error ? error : new Error('Не удалось оформить заказ.'));
       } finally {
-        setIsQuoteLoading(false);
+        setIsSubmitting(false);
       }
     },
     [options, token],
@@ -92,10 +95,10 @@ export function useCheckout({ token }: UseCheckoutOptions) {
 
   return {
     options,
-    quote,
+    order,
     error,
     isLoading,
-    isQuoteLoading,
+    isSubmitting,
     submit,
   };
 }
