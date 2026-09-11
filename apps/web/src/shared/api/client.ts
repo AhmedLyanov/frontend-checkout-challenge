@@ -4,6 +4,10 @@ import type { ApiError as ApiErrorResponse, ApiResult } from '@checkout/contract
 
 import { ApiError, NetworkError, ResponseParseError } from './errors';
 
+export interface ApiRequestOptions {
+  headers?: Record<string, string>;
+}
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export interface ApiRequestConfig extends Omit<AxiosRequestConfig, 'data'> {
