@@ -2,10 +2,10 @@ import type { Product } from '@checkout/contracts';
 
 interface ProductCardProps {
   product: Product;
-  onAdd: (productId: string) => void;
+  action?: React.ReactNode;
 }
 
-export function ProductCard({ product, onAdd }: ProductCardProps) {
+export function ProductCard({ product, action }: ProductCardProps) {
   const isAvailable = product.stock > 0;
 
   return (
@@ -18,9 +18,7 @@ export function ProductCard({ product, onAdd }: ProductCardProps) {
 
       <p>{isAvailable ? `В наличии: ${product.stock}` : 'Нет в наличии'}</p>
 
-      <button type="button" disabled={!isAvailable} onClick={() => onAdd(product.id)}>
-        Добавить в корзину
-      </button>
+      {action}
     </article>
   );
 }
