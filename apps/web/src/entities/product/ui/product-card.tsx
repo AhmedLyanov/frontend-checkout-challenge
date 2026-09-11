@@ -1,5 +1,7 @@
 import type { Product } from '@checkout/contracts';
 
+import { Typography } from '@/shared/ui';
+
 interface ProductCardProps {
   product: Product;
   action?: React.ReactNode;
@@ -10,15 +12,19 @@ export function ProductCard({ product, action }: ProductCardProps) {
 
   return (
     <article className="flex flex-col gap-4 rounded-xl border border-asphalt-700 bg-asphalt-800 p-6 transition-colors hover:border-asphalt-500">
-      <h3 className="text-lg font-semibold">{product.title}</h3>
+      <Typography as="h3" variant="heading">
+        {product.title}
+      </Typography>
 
-      <p className="text-sm text-asphalt-200">{product.description}</p>
+      <Typography variant="muted">{product.description}</Typography>
 
-      <p className="pt-2 text-xl font-bold">{(product.price / 100).toLocaleString('ru-RU')} ₽</p>
+      <Typography variant="price" className="pt-2">
+        {(product.price / 100).toLocaleString('ru-RU')} ₽
+      </Typography>
 
-      <p className={isAvailable ? 'text-sm text-success' : 'text-sm text-danger'}>
+      <Typography variant={isAvailable ? 'success' : 'danger'}>
         {isAvailable ? `В наличии: ${product.stock}` : 'Нет в наличии'}
-      </p>
+      </Typography>
 
       <div className="mt-auto pt-4">{action}</div>
     </article>

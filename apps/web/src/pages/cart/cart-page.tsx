@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { useCart } from '@/entities/cart/model/use-cart';
 import { CartItem } from '@/entities/cart/ui/cart-item';
+import { Loader, Typography } from '@/shared/ui';
 
 export function CartPage() {
   const { cart, isLoading, error, loadCart, updateQuantity, removeItem } = useCart();
@@ -13,7 +14,7 @@ export function CartPage() {
   if (isLoading) {
     return (
       <main>
-        <p className="text-asphalt-200">Загрузка...</p>
+        <Loader />
       </main>
     );
   }
@@ -21,7 +22,7 @@ export function CartPage() {
   if (error) {
     return (
       <main>
-        <p className="text-danger">{error.message}</p>
+        <Typography variant="danger">{error.message}</Typography>
       </main>
     );
   }
@@ -29,15 +30,20 @@ export function CartPage() {
   if (!cart || cart.items.length === 0) {
     return (
       <main className="flex min-h-[70vh] flex-col items-center justify-center gap-4">
-        <p className="text-6xl text-asphalt-300">:(</p>
-        <p className="text-xl text-asphalt-300">Корзина пуста</p>
+        <Typography variant="empty" className="text-6xl">
+          :(
+        </Typography>
+
+        <Typography variant="empty">Корзина пуста</Typography>
       </main>
     );
   }
 
   return (
     <main>
-      <h1 className="mb-8 text-3xl font-bold">Корзина</h1>
+      <Typography variant="h1" className="mb-8">
+        Корзина
+      </Typography>
 
       <div className="flex flex-col gap-4">
         {cart.items.map((item) => (
@@ -51,9 +57,9 @@ export function CartPage() {
         ))}
       </div>
 
-      <p className="mt-8 text-right text-2xl font-semibold">
+      <Typography variant="total" className="mt-8 text-right">
         Итого: {(cart.subtotal / 100).toLocaleString('ru-RU')} ₽
-      </p>
+      </Typography>
     </main>
   );
 }

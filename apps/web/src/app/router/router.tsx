@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { DefaultLayout } from '@/app/layouts/default';
+import { Loader } from '@/shared/ui';
 
 const CatalogPage = lazy(() =>
   import('@/pages/catalog/catalog-page').then((module) => ({
@@ -15,10 +16,6 @@ const CartPage = lazy(() =>
   })),
 );
 
-function PageLoader() {
-  return <div>Загрузка...</div>;
-}
-
 const router = createBrowserRouter([
   {
     element: <DefaultLayout />,
@@ -26,7 +23,7 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: (
-          <Suspense fallback={<PageLoader />}>
+          <Suspense fallback={<Loader />}>
             <CatalogPage />
           </Suspense>
         ),
@@ -34,7 +31,7 @@ const router = createBrowserRouter([
       {
         path: '/cart',
         element: (
-          <Suspense fallback={<PageLoader />}>
+          <Suspense fallback={<Loader />}>
             <CartPage />
           </Suspense>
         ),

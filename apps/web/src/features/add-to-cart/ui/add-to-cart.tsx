@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { Button } from '@/shared/ui';
+
 interface AddToCartButtonProps {
   productId: string;
   disabled?: boolean;
@@ -19,8 +21,8 @@ export function AddToCartButton({ productId, disabled = false, onAdd }: AddToCar
   };
 
   return (
-    <button type="button" disabled={disabled || isAdding} onClick={handleAdd}>
+    <Button type="button" disabled={disabled || isAdding} onClick={handleAdd} className="w-full">
       {isAdding ? 'Добавление...' : 'Добавить в корзину'}
-    </button>
+    </Button>
   );
 }
